@@ -1,0 +1,18 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:${user.dir}/config/
+#            - file:${user.dir}/messages/
+      uri: http//localhost:8888
+  config:
+    activate:
+      on-profile: "native"
+#  devtools:
+#    add-properties: false

@@ -1,0 +1,63 @@
+server:
+  servlet:
+    context-path: /payment
+  port: 8091
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: payment-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+---
+
+#spring:
+#  application:
+#    name: order-service
+
+# Configurazione di default
+#spring:
+#  application:
+#    name: order-service
+#  profiles:
+#    active: local # Imposta il profilo di default se non specificato
+#  some:
+#    property: "Configurazione caricata con successo"
+#
+#---
+
+# Configurazione per il profilo 'local'
+#spring:
+#  config:
+#    activate:
+#      on-profile: local
+#  some:
+#    property: "Configurazione caricata con successo"
+#
+#---
+# Configurazione per il profilo 'dev'
+#spring:
+#  config:
+#    activate:
+#      on-profile: dev
+#  some:
+#    property: "Configurazione caricata con successo"
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:ORCLCDB
+    username: UTEAPP01
+    password: Passw0rd
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+#    database-platform: org.hibernate.dialect.Oracle19cDialect
