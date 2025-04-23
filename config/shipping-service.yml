@@ -3,6 +3,10 @@ server:
     context-path: /shipping
   port: 8093
 
+temporal:
+  service-address: localhost:7233
+  namespace: default
+
 #spring:
 #  kafka:
 #    bootstrap-servers: localhost:9092

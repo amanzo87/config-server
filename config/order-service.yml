@@ -3,16 +3,46 @@ server:
     context-path: /order
   port: 8090
 
-spring:
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: order-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
+#spring:
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    consumer:
+#      group-id: order-group
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#      properties:
+#        spring.json.trusted.packages: "*"
+
+temporal:
+  service-address: localhost:7233
+  namespace: default
+  connection:
+    timeout: 10s
+    keep-alive:
+      time: 5s
+      timeout: 2s
+  worker:
+    sticky-cache-size: 1000  # Previene riavvii inutili del poller
+    deadlock-detection-interval: 500ms
+    workflow-thread-pool-size: 100
+    activities-per-second: 20 # Aumenta se necessario
+    max-concurrent-activity-executions: 100
+    disable-activity-worker-polling: false
+    local-activity-worker-polling: true
+#    auto-start: true
+    task-queue: order-task-queue
+    workflows:
+      - it.interno.order.workflow.impl.OrderWorkFlowImpl
+  activities:
+      - it.interno.order.activities.impl.OrderActivitiesImpl
+#      - it.interno.order.activities.impl.InventoryActivitiesImpl
+#      - it.interno.order.activities.impl.PaymentActivitiesImpl
+
+logging:
+  level:
+    io.temporal: debug
+#    io.grpc: DEBUG
 
 ---
 
@@ -45,13 +75,23 @@ spring:
   config:
     activate:
       on-profile: dev
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:ORCLCDB
     username: UTEAPP01
     password: Passw0rd
     driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+      leak-detection-threshold: 60000
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
 #    database-platform: org.hibernate.dialect.Oracle19cDialect
+
+#feign:
+#  circuitbreaker:
+#    enabled: true
